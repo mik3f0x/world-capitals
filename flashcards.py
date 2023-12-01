@@ -1,5 +1,5 @@
 from peewee import *
-from playhouse.shortcuts import model_to_dict, dict_to_model
+# from playhouse.shortcuts import model_to_dict, dict_to_model
 from main import Country
 import random
 
@@ -52,18 +52,25 @@ def capitals_game(turns):
         print("Thank you for playing my game! Goodbye!")
 
 
-# Function to allow the user to add a suggestion
 def add_suggestion():
+
+    def find_country_by_name(country_name):
+        try:
+            return Country.get(Country.name == country_name)
+        except Country.DoesNotExist:
+            return None
+
     country_name = input("Enter the name of the country: ")
-    country_capital = input("Enter the capital of the country: ")
 
-    # Create a new Country object with user input
-    suggestion = Country(name=country_name, capital=country_capital)
-    
-    # Save the suggestion to the database
-    suggestion.save()
-    print(f"Suggestion added: {country_name} - {country_capital}")
+    existing_country = find_country_by_name(country_name)
 
+    if existing_country:
+        print(f"Country '{country_name}' already exists in the database.")
+    else:
+        country_capital = input("Enter the capital of the country: ")
+        suggestion = Country(name=country_name, capital=country_capital)
+        suggestion.save()
+        print(f"Suggestion added: {country_name} - {country_capital}")
 
 if path == 'a':
     card_count = int(input(f"How many cards do you want to play? (Select 0 to play all {card_count} flashcards) "))
