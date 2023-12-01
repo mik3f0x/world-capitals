@@ -10,8 +10,3 @@ class BaseModel(Model):
 class Country(BaseModel):
     name = CharField()
     capital = CharField()
-
-# db.connect()
-# db.drop_tables([Country])
-# db.create_tables([Country])
-
