@@ -3,26 +3,35 @@ from playhouse.shortcuts import model_to_dict, dict_to_model
 from main import Country
 import random
 
-def capitals_game():
+countries = []
 
-    countries = []
+for country in Country.select():
+    country_dict = {
+        'name': country.name,
+        'capital': country.capital,
+    }
+    countries.append(country_dict)
 
-    for country in Country.select():
-        country_dict = {
-            'name': country.name,
-            'capital': country.capital,
-            # Add other attributes as needed
-        }
-        countries.append(country_dict)
+card_count = len(countries)
+
+print("World Capitals Flashcards\n")
+
+path = input("Would you like to (a) play the flashcards, or (b) make new cards? ")
+
+
+def capitals_game(turns):
 
     correct = 0
     incorrect = 0
 
     random.shuffle(countries)
 
+    if turns == 0 or turns > len(countries) or turns < 0:
+        turns = len(countries)
+
     print("Guess the capitals of each country and test your knowledge!")
 
-    for i in range(0, len(countries)):
+    for i in range(0, turns):
         guess = input(f"What is the capital of {countries[i]['name']}: ")
 
         answer = countries[i]["capital"]
@@ -42,4 +51,24 @@ def capitals_game():
     else:
         print("Thank you for playing my game! Goodbye!")
 
-capitals_game()
+
+# Function to allow the user to add a suggestion
+def add_suggestion():
+    country_name = input("Enter the name of the country: ")
+    country_capital = input("Enter the capital of the country: ")
+
+    # Create a new Country object with user input
+    suggestion = Country(name=country_name, capital=country_capital)
+    
+    # Save the suggestion to the database
+    suggestion.save()
+    print(f"Suggestion added: {country_name} - {country_capital}")
+
+
+if path == 'a':
+    card_count = int(input(f"How many cards do you want to play? (Select 0 to play all {card_count} flashcards) "))
+    capitals_game(card_count)
+elif path == 'b':
+    add_suggestion()
+else:
+    print("sorry")
